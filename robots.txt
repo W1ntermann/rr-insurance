@@ -1,2 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /undefined/
+Disallow: /null/
+
+Sitemap: https://rr-insurance.vercel.app/sitemap.xml
