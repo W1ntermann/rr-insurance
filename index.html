@@ -816,10 +816,10 @@
                  <i class="fas fa-search search-icon"></i>
              </div>
              <ul class="nav-links">
-                 <li><a href="#about">Про нас</a></li>
-                 <li><a href="#services">Послуги</a></li>
-                 <li><a href="#partners">Партнери</a></li>
-                 <li><a href="#contact">Контакти</a></li>
+                 <li><a href="/about">Про нас</a></li>
+                 <li><a href="/services">Послуги</a></li>
+                 <li><a href="/partners">Партнери</a></li>
+                 <li><a href="/contact">Контакти</a></li>
              </ul>
         </div>
     </header>
@@ -1001,190 +1001,270 @@
         </div>
     </footer>
     <script>
-        const burger = document.getElementById('burger-menu');
-        const navLinks = document.querySelector('.nav-links');
+        // SPA Navigation for clean URLs
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize all functionality
+    initBurgerMenu();
+    initCopyButtons();
+    initMap();
+    initSearch();
+    initSPANavigation();
+});
+
+// Burger menu functionality
+function initBurgerMenu() {
+    const burger = document.getElementById('burger-menu');
+    const navLinks = document.querySelector('.nav-links');
+    
+    if (burger && navLinks) {
         burger.addEventListener('click', function() {
             navLinks.classList.toggle('active');
             burger.classList.toggle('active');
         });
-         // Close menu on link click (mobile UX)
-         document.querySelectorAll('.nav-links a').forEach(link => {
-             link.addEventListener('click', () => {
-                 if(window.innerWidth <= 900) {
-                     navLinks.classList.remove('active');
-                     burger.classList.remove('active');
-                 }
-             });
-         });
-         
-         // Copy phone numbers functionality
-         document.querySelectorAll('.copy-btn').forEach(button => {
-             button.addEventListener('click', function() {
-                 const phoneNumber = this.getAttribute('data-phone');
-                 
-                 // Try modern clipboard API first
-                 if (navigator.clipboard && window.isSecureContext) {
-                     navigator.clipboard.writeText(phoneNumber).then(() => {
-                         showCopyFeedback(this);
-                     }).catch(() => {
-                         fallbackCopy(phoneNumber, this);
-                     });
-                 } else {
-                     fallbackCopy(phoneNumber, this);
-                 }
-             });
-         });
-         
-         function fallbackCopy(text, button) {
-             const textArea = document.createElement('textarea');
-             textArea.value = text;
-             textArea.style.position = 'fixed';
-             textArea.style.left = '-999999px';
-             textArea.style.top = '-999999px';
-             document.body.appendChild(textArea);
-             textArea.focus();
-             textArea.select();
-             
-             try {
-                 document.execCommand('copy');
-                 showCopyFeedback(button);
-             } catch (err) {
-                 console.error('Failed to copy: ', err);
-             }
-             
-             document.body.removeChild(textArea);
-         }
-         
-         function showCopyFeedback(button) {
-             const originalText = button.innerHTML;
-             
-             button.classList.add('copied');
-             button.innerHTML = '<i class="fas fa-check"></i> Скопійовано!';
-             
-             setTimeout(() => {
-                 button.classList.remove('copied');
-                 button.innerHTML = originalText;
-             }, 2000);
-         }
-         
-         // Initialize dynamic map
-         const officeLocation = [46.428838, 30.712592];
+        
+        // Close menu on link click (mobile UX)
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                if(window.innerWidth <= 900) {
+                    navLinks.classList.remove('active');
+                    burger.classList.remove('active');
+                }
+            });
+        });
+    }
+}
 
-  function initMap() {
+// Copy phone numbers functionality
+function initCopyButtons() {
+    document.querySelectorAll('.copy-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const phoneNumber = this.getAttribute('data-phone');
+            
+            // Try modern clipboard API first
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(phoneNumber).then(() => {
+                    showCopyFeedback(this);
+                }).catch(() => {
+                    fallbackCopy(phoneNumber, this);
+                });
+            } else {
+                fallbackCopy(phoneNumber, this);
+            }
+        });
+    });
+    
+    function fallbackCopy(text, button) {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        
+        try {
+            document.execCommand('copy');
+            showCopyFeedback(button);
+        } catch (err) {
+            console.error('Failed to copy: ', err);
+        }
+        
+        document.body.removeChild(textArea);
+    }
+    
+    function showCopyFeedback(button) {
+        const originalText = button.innerHTML;
+        
+        button.classList.add('copied');
+        button.innerHTML = '<i class="fas fa-check"></i> Скопійовано!';
+        
+        setTimeout(() => {
+            button.classList.remove('copied');
+            button.innerHTML = originalText;
+        }, 2000);
+    }
+}
+
+// Map functionality
+function initMap() {
+    const officeLocation = [46.428838, 30.712592];
+    const mapElement = document.getElementById('map');
+    
+    if (!mapElement) return;
+    
     const map = L.map('map', { scrollWheelZoom: false }).setView(officeLocation, 17);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors'
+        attribution: '© OpenStreetMap contributors'
     }).addTo(map);
 
     const marker = L.marker(officeLocation).addTo(map);
 
     const gmaps = `https://www.google.com/maps?q=${officeLocation[0]},${officeLocation[1]}`;
     marker
-      .bindPopup(
-        `<b>INSURANCE RR</b><br>вул. Космонавтів, 17, Одеса<br>
-         <a href="${gmaps}" target="_blank" rel="noopener">Відкрити в Google Maps</a>`
-      )
-      .openPopup();
+        .bindPopup(
+            `<b>INSURANCE RR</b><br>вул. Космонавтів, 17, Одеса<br>
+             <a href="${gmaps}" target="_blank" rel="noopener">Відкрити в Google Maps</a>`
+        )
+        .openPopup();
 
-    // Якщо карта в grid/flex-контейнері — підправляємо розмір після рендеру
+    // Fix map size after render
     setTimeout(() => map.invalidateSize(), 0);
-  }
+}
 
-  document.addEventListener('DOMContentLoaded', initMap);
-  
-  // Search functionality
-  function initSearch() {
-      const searchInput = document.getElementById('searchInput');
-      const searchResults = document.getElementById('searchResults');
-      const searchOverlay = document.getElementById('searchOverlay');
-      
-      if (!searchInput) return;
-      
-      // Search data
-      const searchData = [
-          { title: 'Автострахування (ОСЦПВ)', content: 'Обов\'язкове страхування цивільно-правової відповідальності власників наземних транспортних засобів.', section: 'services' },
-          { title: 'Зелена картка', content: 'Міжнародний поліс страхування цивільно-правової відповідальності власників транспортних засобів.', section: 'services' },
-          { title: 'КАСКО', content: 'Добровільне комплексне страхування автомобіля від пошкодження, крадіжки та інших ризиків.', section: 'services' },
-          { title: 'Міні КАСКО', content: 'Спрощена та доступна версія автомобільного страхування від конкретних ризиків.', section: 'services' },
-          { title: 'Туристичне страхування', content: 'Надійний захист для подорожей за кордон, що покриває медичні витрати та інші непередбачені обставини.', section: 'services' },
-          { title: 'Страхування іноземців', content: 'Обов\'язкове страхування для отримання візи для іноземних громадян, які відвідують Україну.', section: 'services' },
-          { title: 'Про компанію', content: 'Ми працюємо на ринку страхування понад 20 років. Наша головна метa — надавати клієнтам експертні консультації.', section: 'about' },
-          { title: 'Контакти', content: 'м. Одеса, вул. Космонавтів, 17. Телефони: +38 (097) 483-78-88, +38 (099) 196-58-88', section: 'contact' },
-          { title: 'Партнери', content: 'Ми співпрацюємо з провідними страховими компаніями України: ТАС, КНЯЖА, УСГ, АРХ.', section: 'partners' }
-      ];
-      
-      // Search function
-      function performSearch(query) {
-          if (query.length < 2) {
-              searchResults.innerHTML = '';
-              searchOverlay.style.display = 'none';
-              return;
-          }
-          
-          const results = searchData.filter(item => 
-              item.title.toLowerCase().includes(query.toLowerCase()) ||
-              item.content.toLowerCase().includes(query.toLowerCase())
-          );
-          
-          displayResults(results, query);
-      }
-      
-      // Display search results
-      function displayResults(results, query) {
-          if (results.length === 0) {
-              searchResults.innerHTML = '<div class="search-no-results">Нічого не знайдено для "' + query + '"</div>';
-          } else {
-              searchResults.innerHTML = results.map(result => `
-                  <div class="search-result-item" onclick="scrollToSection('${result.section}')">
-                      <h4>${highlightText(result.title, query)}</h4>
-                      <p>${highlightText(result.content, query)}</p>
-                  </div>
-              `).join('');
-          }
-          
-          searchOverlay.style.display = 'block';
-      }
-      
-      // Highlight search terms
-      function highlightText(text, query) {
-          const regex = new RegExp(`(${query})`, 'gi');
-          return text.replace(regex, '<mark>$1</mark>');
-      }
-      
-      // Scroll to section
-      window.scrollToSection = function(sectionId) {
-          const element = document.getElementById(sectionId);
-          if (element) {
-              element.scrollIntoView({ behavior: 'smooth' });
-              searchOverlay.style.display = 'none';
-              searchInput.value = '';
-          }
-      };
-      
-      // Event listeners
-      searchInput.addEventListener('input', (e) => {
-          performSearch(e.target.value);
-      });
-      
-      searchInput.addEventListener('keydown', (e) => {
-          if (e.key === 'Escape') {
-              searchOverlay.style.display = 'none';
-              searchInput.value = '';
-          }
-      });
-      
-      // Close search on overlay click
-      searchOverlay.addEventListener('click', (e) => {
-          if (e.target === searchOverlay) {
-              searchOverlay.style.display = 'none';
-              searchInput.value = '';
-          }
-      });
-  }
-  
-  // Initialize search when page loads
-  document.addEventListener('DOMContentLoaded', initSearch);
+// Search functionality
+function initSearch() {
+    const searchInput = document.getElementById('searchInput');
+    const searchResults = document.getElementById('searchResults');
+    const searchOverlay = document.getElementById('searchOverlay');
+    
+    if (!searchInput) return;
+    
+    // Search data
+    const searchData = [
+        { title: 'Автострахування (ОСЦПВ)', content: 'Обов\'язкове страхування цивільно-правової відповідальності власників наземних транспортних засобів.', section: 'services' },
+        { title: 'Зелена картка', content: 'Міжнародний поліс страхування цивільно-правової відповідальності власників транспортних засобів.', section: 'services' },
+        { title: 'КАСКО', content: 'Добровільне комплексне страхування автомобіля від пошкодження, крадіжки та інших ризиків.', section: 'services' },
+        { title: 'Міні КАСКО', content: 'Спрощена та доступна версія автомобільного страхування від конкретних ризиків.', section: 'services' },
+        { title: 'Туристичне страхування', content: 'Надійний захист для подорожей за кордон, що покриває медичні витрати та інші непередбачені обставини.', section: 'services' },
+        { title: 'Страхування іноземців', content: 'Обов\'язкове страхування для отримання візи для іноземних громадян, які відвідують Україну.', section: 'services' },
+        { title: 'Про компанію', content: 'Ми працюємо на ринку страхування понад 20 років. Наша головна метa — надавати клієнтам експертні консультації.', section: 'about' },
+        { title: 'Контакти', content: 'м. Одеса, вул. Космонавтів, 17. Телефони: +38 (097) 483-78-88, +38 (099) 196-58-88', section: 'contact' },
+        { title: 'Партнери', content: 'Ми співпрацюємо з провідними страховими компаніями України: ТАС, КНЯЖА, УСГ, АРХ.', section: 'partners' }
+    ];
+    
+    // Search function
+    function performSearch(query) {
+        if (query.length < 2) {
+            searchResults.innerHTML = '';
+            searchOverlay.style.display = 'none';
+            return;
+        }
+        
+        const results = searchData.filter(item => 
+            item.title.toLowerCase().includes(query.toLowerCase()) ||
+            item.content.toLowerCase().includes(query.toLowerCase())
+        );
+        
+        displayResults(results, query);
+    }
+    
+    // Display search results
+    function displayResults(results, query) {
+        if (results.length === 0) {
+            searchResults.innerHTML = '<div class="search-no-results">Нічого не знайдено для "' + query + '"</div>';
+        } else {
+            searchResults.innerHTML = results.map(result => `
+                <div class="search-result-item" onclick="scrollToSection('${result.section}')">
+                    <h4>${highlightText(result.title, query)}</h4>
+                    <p>${highlightText(result.content, query)}</p>
+                </div>
+            `).join('');
+        }
+        
+        searchOverlay.style.display = 'block';
+    }
+    
+    // Highlight search terms
+    function highlightText(text, query) {
+        const regex = new RegExp(`(${query})`, 'gi');
+        return text.replace(regex, '<mark>$1</mark>');
+    }
+    
+    // Event listeners
+    searchInput.addEventListener('input', (e) => {
+        performSearch(e.target.value);
+    });
+    
+    searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            searchOverlay.style.display = 'none';
+            searchInput.value = '';
+        }
+    });
+    
+    // Close search on overlay click
+    searchOverlay.addEventListener('click', (e) => {
+        if (e.target === searchOverlay) {
+            searchOverlay.style.display = 'none';
+            searchInput.value = '';
+        }
+    });
+}
+
+// SPA Navigation functionality
+function initSPANavigation() {
+    // Handle navigation without page reload
+    document.querySelectorAll('a[href^="/"]').forEach(link => {
+        link.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            
+            if (href !== '/' && !href.startsWith('http')) {
+                e.preventDefault();
+                
+                // Update browser history
+                window.history.pushState({}, '', href);
+                
+                // Scroll to section
+                const section = href.substring(1); // Remove leading slash
+                scrollToSection(section);
+                
+                // Update active nav link
+                updateActiveNavLink(href);
+            }
+        });
+    });
+    
+    // Handle browser back/forward buttons
+    window.addEventListener('popstate', function() {
+        const section = window.location.pathname.substring(1) || 'about';
+        scrollToSection(section);
+        updateActiveNavLink(window.location.pathname);
+    });
+    
+    // Set initial active link based on current URL
+    updateActiveNavLink(window.location.pathname);
+}
+
+// Scroll to section function
+function scrollToSection(sectionId) {
+    const element = document.getElementById(sectionId);
+    if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+        
+        // Close search if open
+        const searchOverlay = document.getElementById('searchOverlay');
+        const searchInput = document.getElementById('searchInput');
+        if (searchOverlay && searchInput) {
+            searchOverlay.style.display = 'none';
+            searchInput.value = '';
+        }
+        
+        // Close mobile menu
+        if (window.innerWidth <= 900) {
+            const navLinks = document.querySelector('.nav-links');
+            const burger = document.getElementById('burger-menu');
+            if (navLinks && burger) {
+                navLinks.classList.remove('active');
+                burger.classList.remove('active');
+            }
+        }
+    }
+}
+
+// Update active navigation link
+function updateActiveNavLink(currentPath) {
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === currentPath) {
+            link.classList.add('active');
+        }
+    });
+}
+
+// Make scrollToSection available globally for search functionality
+window.scrollToSection = scrollToSection;
     </script>
 </body>
 </html>
